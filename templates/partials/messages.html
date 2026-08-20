@@ -1,0 +1,8 @@
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-error{% else %}alert-info{% endif %}">
+      <span>{{ message }}</span>
+      <button type="button" data-dismiss aria-label="Dismiss">&times;</button>
+    </div>
+  {% endfor %}
+{% endif %}

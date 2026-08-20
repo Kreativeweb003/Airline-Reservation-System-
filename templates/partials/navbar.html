@@ -1,0 +1,36 @@
+<nav class="navbar">
+  <div class="container">
+    <a href="{% url 'dashboard:home' %}" class="navbar-brand">
+      <span class="flap">✈</span> AIRLINE RES
+    </a>
+
+    <button class="navbar-toggle" aria-label="Toggle menu">&#9776;</button>
+
+    <ul class="navbar-links">
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'flights:search' %}">Search Flights</a></li>
+
+        {% if user.is_staff or user.is_admin_role %}
+          <li><a href="{% url 'airports:list' %}">Airports</a></li>
+          <li><a href="{% url 'aircraft:list' %}">Aircraft</a></li>
+          <li><a href="{% url 'flights:list' %}">Flights</a></li>
+          <li><a href="{% url 'dashboard:occupancy_report' %}">Reports</a></li>
+        {% else %}
+          <li><a href="{% url 'reservations:my_reservations' %}">My Bookings</a></li>
+        {% endif %}
+
+        <li><a href="{% url 'accounts:profile' %}">{{ user.get_full_name|default:user.username }}</a></li>
+        <li>
+          <form method="post" action="{% url 'accounts:logout' %}" style="display:inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline btn-sm" style="border-color:#3A4C6B;color:#C7D2E3;">Log out</button>
+          </form>
+        </li>
+      {% else %}
+        <li><a href="{% url 'reservations:lookup' %}">Find My Booking</a></li>
+        <li><a href="{% url 'accounts:login' %}">Log in</a></li>
+        <li><a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm">Book Now</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Airports{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Airports</h1>
+  <div class="actions">
+    <a href="{% url 'airports:create' %}" class="btn btn-primary">+ New Airport</a>
+  </div>
+</div>
+
+<form method="get" class="form-group" style="max-width:340px;">
+  <input type="text" name="q" value="{{ query }}" placeholder="Search by code, city, country&hellip;">
+</form>
+
+{% if airports %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Code</th><th>Name</th><th>City</th><th>Country</th><th>Status</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for airport in airports %}
+      <tr>
+        <td><strong>{{ airport.iata_code }}</strong></td>
+        <td>{{ airport.name }}</td>
+        <td>{{ airport.city }}</td>
+        <td>{{ airport.country }}</td>
+        <td>
+          {% if airport.is_active %}
+            <span class="badge badge-green">Active</span>
+          {% else %}
+            <span class="badge badge-red">Inactive</span>
+          {% endif %}
+        </td>
+        <td class="flex">
+          <a href="{% url 'airports:edit' airport.pk %}" class="btn btn-outline btn-sm">Edit</a>
+          {% if airport.is_active %}
+          <form method="post" action="{% url 'airports:deactivate' airport.pk %}" onsubmit="return confirm('Deactivate {{ airport.iata_code }}?');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Deactivate</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state card">
+  <h3>No airports found</h3>
+  <p>Add your first airport to start building routes.</p>
+  <a href="{% url 'airports:create' %}" class="btn btn-primary">+ New Airport</a>
+</div>
+{% endif %}
+{% endblock %}

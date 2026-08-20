@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{% if mode == "edit" %}Edit Airport{% else %}New Airport{% endif %}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>{% if mode == "edit" %}Edit {{ airport.iata_code }}{% else %}New Airport{% endif %}</h1>
+</div>
+
+<div class="card" style="max-width:520px;">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+      <div class="form-group" style="max-width:140px;">
+        <label for="{{ form.iata_code.id_for_label }}">IATA Code</label>
+        {{ form.iata_code }}
+        {% if form.iata_code.errors %}<div class="form-errors">{{ form.iata_code.errors|striptags }}</div>{% endif %}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.timezone.id_for_label }}">Timezone</label>
+        {{ form.timezone }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="{{ form.name.id_for_label }}">Airport name</label>
+      {{ form.name }}
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="{{ form.city.id_for_label }}">City</label>
+        {{ form.city }}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.country.id_for_label }}">Country</label>
+        {{ form.country }}
+      </div>
+    </div>
+
+    <div class="checkbox-group form-group">
+      {{ form.is_active }}
+      <label for="{{ form.is_active.id_for_label }}">Active</label>
+    </div>
+
+    <div class="flex mt-1">
+      <button type="submit" class="btn btn-primary">
+        {% if mode == "edit" %}Save changes{% else %}Create airport{% endif %}
+      </button>
+      <a href="{% url 'airports:list' %}" class="btn btn-outline">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

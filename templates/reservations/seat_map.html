@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Select Seat — {{ flight.flight_number }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <p class="eyebrow">{{ flight.flight_number }} &middot; {{ flight.route.origin.iata_code }} &rarr; {{ flight.route.destination.iata_code }}</p>
+    <h1>Select Your Seat</h1>
+  </div>
+</div>
+
+<div class="seat-legend">
+  <span class="item"><span class="swatch" style="background:var(--paper-raised);border:1.5px solid var(--slate-light);"></span> Available</span>
+  <span class="item"><span class="swatch" style="background:var(--amber);"></span> Selected</span>
+  <span class="item"><span class="swatch" style="background:#EAEDF3;border:1.5px dashed var(--slate-light);"></span> Reserved</span>
+  <span class="item"><span class="swatch" style="background:var(--paper-raised);border:1.5px solid var(--ink);"></span> First</span>
+  <span class="item"><span class="swatch" style="background:var(--paper-raised);border:1.5px solid var(--amber);"></span> Business</span>
+</div>
+
+<div class="seat-grid">
+  {% for seat in seats %}
+    <button
+      type="button"
+      class="seat {{ seat.seat_class|lower }} {% if seat.is_available %}available{% else %}reserved{% endif %}"
+      data-seat-number="{{ seat.seat_number }}"
+      data-seat-class="{{ seat.get_seat_class_display }}"
+      data-price="{{ seat.price }}"
+      data-book-url="{% url 'reservations:book_seat' flight.pk seat.pk %}"
+      {% if not seat.is_available %}disabled{% endif %}
+      title="{{ seat.seat_number }} · {{ seat.get_seat_class_display }} · {{ seat.price }}"
+    >{{ seat.seat_number }}</button>
+  {% endfor %}
+</div>
+
+<div class="card flex-between" style="max-width:480px;">
+  <div>
+    <p class="eyebrow mb-0">Selected seat</p>
+    <p class="mb-0" id="selected-seat-label">No seat selected</p>
+  </div>
+  <a id="proceed-btn" class="btn btn-primary" href="#" disabled aria-disabled="true">Continue &rarr;</a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/seat_map.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}{% if mode == "edit" %}Edit Aircraft{% else %}New Aircraft{% endif %}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>{% if mode == "edit" %}Edit {{ aircraft.registration_number }}{% else %}New Aircraft{% endif %}</h1>
+</div>
+
+<form method="post">
+  {% csrf_token %}
+
+  <div class="card">
+    <div class="card-header"><h3>Aircraft Details</h3></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="{{ form.registration_number.id_for_label }}">Registration number</label>
+        {{ form.registration_number }}
+      </div>
+      <div class="form-group">
+        <label for="{{ form.manufacturer.id_for_label }}">Manufacturer</label>
+        {{ form.manufacturer }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="{{ form.model_name.id_for_label }}">Model</label>
+      {{ form.model_name }}
+    </div>
+    <div class="checkbox-group form-group">
+      {{ form.is_active }}
+      <label for="{{ form.is_active.id_for_label }}">Active</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3>Seat Configuration</h3>
+      <span class="text-muted" style="font-size:0.8rem;">One row per seat class &mdash; rows must not overlap</span>
+    </div>
+
+    {{ formset.management_form }}
+    {% if formset.non_form_errors %}
+      <div class="form-errors">{{ formset.non_form_errors|striptags }}</div>
+    {% endif %}
+
+    <div id="seat-config-forms">
+      {% for cfg_form in formset %}
+        <div class="form-row" style="align-items:center; border-bottom:1px solid var(--line); padding-bottom:0.75rem; margin-bottom:0.75rem;">
+          {{ cfg_form.id }}
+          <div class="form-group" style="max-width:160px;">
+            <label>Class</label>
+            {{ cfg_form.seat_class }}
+          </div>
+          <div class="form-group" style="max-width:110px;">
+            <label>Row start</label>
+            {{ cfg_form.row_start }}
+          </div>
+          <div class="form-group" style="max-width:110px;">
+            <label>Row end</label>
+            {{ cfg_form.row_end }}
+          </div>
+          <div class="form-group" style="max-width:140px;">
+            <label>Columns</label>
+            {{ cfg_form.columns }}
+          </div>
+          {% if formset.can_delete %}
+          <div class="checkbox-group form-group" style="max-width:100px;">
+            {{ cfg_form.DELETE }}
+            <label>Remove</label>
+          </div>
+          {% endif %}
+          {% if cfg_form.errors %}
+            <div class="form-errors mb-0">{{ cfg_form.errors|striptags }}</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    <p class="form-help">To add another class, save this aircraft first, then edit it again &mdash; the form will show a blank row.</p>
+  </div>
+
+  <div class="flex mt-1">
+    <button type="submit" class="btn btn-primary">
+      {% if mode == "edit" %}Save changes{% else %}Create aircraft{% endif %}
+    </button>
+    <a href="{% url 'aircraft:list' %}" class="btn btn-outline">Cancel</a>
+  </div>
+</form>
+{% endblock %}

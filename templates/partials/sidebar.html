@@ -1,0 +1,25 @@
+<aside class="sidebar">
+  <a href="{% url 'dashboard:home' %}" class="sidebar-brand">
+    <span class="flap">✈</span> AIRLINE RES
+  </a>
+
+  <nav class="sidebar-nav">
+    <p class="sidebar-section">Overview</p>
+    <a href="{% url 'dashboard:home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Dashboard</a>
+    <a href="{% url 'dashboard:occupancy_report' %}" class="{% if request.resolver_match.url_name == 'occupancy_report' %}active{% endif %}">Occupancy Report</a>
+
+    <p class="sidebar-section">Operations</p>
+    <a href="{% url 'flights:list' %}">Flights</a>
+    <a href="{% url 'flights:route_list' %}">Routes</a>
+    <a href="{% url 'airports:list' %}">Airports</a>
+    <a href="{% url 'aircraft:list' %}">Aircraft</a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <a href="{% url 'accounts:profile' %}" class="sidebar-user">{{ user.get_full_name|default:user.username }}</a>
+    <form method="post" action="{% url 'accounts:logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline btn-sm btn-block" style="border-color:#3A4C6B;color:#C7D2E3;">Log out</button>
+    </form>
+  </div>
+</aside>

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Set Pricing — {{ flight.flight_number }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <p class="eyebrow">{{ flight.flight_number }} &middot; {{ flight.route.origin.iata_code }} &rarr; {{ flight.route.destination.iata_code }}</p>
+    <h1>Set Pricing</h1>
+  </div>
+</div>
+
+<div class="card" style="max-width:480px;">
+  <p class="text-muted" style="font-size:0.85rem;">
+    Set a price for every seat class configured on <strong>{{ flight.aircraft.registration_number }}</strong>.
+    Submitting will generate the full seat map and mark this flight as <strong>Scheduled</strong>.
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<div class="form-errors">{{ field.errors|striptags }}</div>{% endif %}
+      </div>
+    {% endfor %}
+    {% if form.non_field_errors %}
+      <div class="form-errors">{{ form.non_field_errors|striptags }}</div>
+    {% endif %}
+    <button type="submit" class="btn btn-primary btn-block mt-1">Activate Flight &amp; Generate Seats</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Search Flights{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Search Flights</h1>
+</div>
+
+<div class="card mt-1" style="margin-bottom:2rem;">
+  <form method="get" class="form-row" style="align-items:flex-end;">
+    <div class="form-group">
+      <label for="{{ form.origin.id_for_label }}">From</label>
+      {{ form.origin }}
+    </div>
+    <div class="form-group">
+      <label for="{{ form.destination.id_for_label }}">To</label>
+      {{ form.destination }}
+    </div>
+    <div class="form-group">
+      <label for="{{ form.travel_date.id_for_label }}">Date</label>
+      {{ form.travel_date }}
+    </div>
+    <div class="form-group" style="flex:0;">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+  </form>
+  {% if form.non_field_errors %}
+    <div class="form-errors">{{ form.non_field_errors|striptags }}</div>
+  {% endif %}
+</div>
+
+{% if form.is_bound and form.is_valid %}
+  {% if results %}
+    <p class="eyebrow mt-1">{{ results|length }} flight{{ results|length|pluralize }} found</p>
+    {% for flight in results %}
+    <div class="flight-strip">
+      <div>
+        <div class="code">{{ flight.flight_number }}</div>
+        <div class="route">
+          {{ flight.route.origin.iata_code }} <span class="arrow">&rarr;</span> {{ flight.route.destination.iata_code }}
+        </div>
+      </div>
+      <div class="meta">
+        <div><strong>{{ flight.departure_datetime|date:"H:i" }}</strong>Departs</div>
+        <div><strong>{{ flight.arrival_datetime|date:"H:i" }}</strong>Arrives</div>
+        <div><strong>{{ flight.available_seats_count }}</strong>Seats left</div>
+      </div>
+      <a href="{% url 'reservations:seat_map' flight.pk %}" class="btn btn-primary">Select Seat</a>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state card">
+      <h3>No flights found</h3>
+      <p>Try a different date or route.</p>
+    </div>
+  {% endif %}
+{% else %}
+  <div class="empty-state card">
+    <h3>Where are you headed?</h3>
+    <p>Enter your origin, destination, and travel date to see available flights.</p>
+  </div>
+{% endif %}
+{% endblock %}

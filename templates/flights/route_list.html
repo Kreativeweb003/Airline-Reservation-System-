@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Routes{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Routes</h1>
+  <div class="actions">
+    <a href="{% url 'flights:route_create' %}" class="btn btn-primary">+ New Route</a>
+  </div>
+</div>
+
+{% if routes %}
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Origin</th><th>Destination</th><th>Distance</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for route in routes %}
+      <tr>
+        <td><strong>{{ route.origin.iata_code }}</strong> &mdash; {{ route.origin.city }}</td>
+        <td><strong>{{ route.destination.iata_code }}</strong> &mdash; {{ route.destination.city }}</td>
+        <td>{{ route.distance_km|default:"—" }} km</td>
+        <td>
+          {% if route.is_active %}<span class="badge badge-green">Active</span>
+          {% else %}<span class="badge badge-red">Inactive</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state card">
+  <h3>No routes yet</h3>
+  <p>Routes connect two airports and are required before scheduling a flight.</p>
+  <a href="{% url 'flights:route_create' %}" class="btn btn-primary">+ New Route</a>
+</div>
+{% endif %}
+{% endblock %}

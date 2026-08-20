@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}New Route{% endblock %}
+{% block content %}
+<div class="page-header"><h1>New Route</h1></div>
+
+<div class="card" style="max-width:480px;">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="{{ form.origin.id_for_label }}">Origin airport</label>
+      {{ form.origin }}
+    </div>
+    <div class="form-group">
+      <label for="{{ form.destination.id_for_label }}">Destination airport</label>
+      {{ form.destination }}
+    </div>
+    <div class="form-group">
+      <label for="{{ form.distance_km.id_for_label }}">Distance (km) <span class="text-muted">(optional)</span></label>
+      {{ form.distance_km }}
+    </div>
+    <div class="checkbox-group form-group">
+      {{ form.is_active }}
+      <label for="{{ form.is_active.id_for_label }}">Active</label>
+    </div>
+    {% if form.non_field_errors %}
+      <div class="form-errors">{{ form.non_field_errors|striptags }}</div>
+    {% endif %}
+    <div class="flex mt-1">
+      <button type="submit" class="btn btn-primary">Create route</button>
+      <a href="{% url 'flights:route_list' %}" class="btn btn-outline">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% if page_obj and page_obj.paginator.num_pages > 1 %}
+<div class="flex-between mt-2">
+  <span class="text-muted" style="font-size:0.82rem;">
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+  </span>
+  <div class="flex">
+    {% if page_obj.has_previous %}
+      <a class="btn btn-outline btn-sm" href="?page={{ page_obj.previous_page_number }}">&larr; Prev</a>
+    {% endif %}
+    {% if page_obj.has_next %}
+      <a class="btn btn-outline btn-sm" href="?page={{ page_obj.next_page_number }}">Next &rarr;</a>
+    {% endif %}
+  </div>
+</div>
+{% endif %}

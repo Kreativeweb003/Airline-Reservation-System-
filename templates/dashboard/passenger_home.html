@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <p class="eyebrow">Welcome back</p>
+    <h1>{{ user.get_full_name|default:user.username }}</h1>
+  </div>
+  <div class="actions">
+    <a href="{% url 'flights:search' %}" class="btn btn-primary">+ Book a Flight</a>
+  </div>
+</div>
+
+<h3>Upcoming Trips</h3>
+{% if upcoming %}
+  {% for r in upcoming %}
+  <div class="flight-strip">
+    <div>
+      <div class="code">{{ r.booking_reference }}</div>
+      <div class="route">{{ r.flight.route.origin.iata_code }} <span class="arrow">&rarr;</span> {{ r.flight.route.destination.iata_code }}</div>
+    </div>
+    <div class="meta">
+      <div><strong>{{ r.flight.departure_datetime|date:"d M Y" }}</strong>Date</div>
+      <div><strong>{{ r.seat.seat_number }}</strong>Seat</div>
+    </div>
+    <a href="{% url 'reservations:detail' r.pk %}" class="btn btn-outline">View</a>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="empty-state card">
+    <h3>No trips coming up</h3>
+    <p>Search for a flight and you'll see it here once booked.</p>
+  </div>
+{% endif %}
+
+<div class="flex-between mt-3">
+  <h3 class="mb-0">Recent Activity</h3>
+  <a href="{% url 'reservations:my_reservations' %}" class="text-muted" style="font-size:0.85rem;">View all bookings &rarr;</a>
+</div>
+{% if recent %}
+<div class="table-wrap mt-1">
+  <table>
+    <thead><tr><th>Reference</th><th>Flight</th><th>Date</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for r in recent %}
+      <tr>
+        <td class="code">{{ r.booking_reference }}</td>
+        <td>{{ r.flight.flight_number }}</td>
+        <td>{{ r.flight.departure_datetime|date:"d M Y" }}</td>
+        <td>
+          {% if r.status == "CONFIRMED" %}<span class="badge badge-green">Confirmed</span>
+          {% elif r.status == "CANCELLED" %}<span class="badge badge-red">Cancelled</span>
+          {% else %}<span class="badge badge-slate">{{ r.get_status_display }}</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}

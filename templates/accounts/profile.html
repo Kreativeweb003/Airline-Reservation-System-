@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>My Profile</h1>
+  <div class="actions">
+    <a href="{% url 'accounts:profile_edit' %}" class="btn btn-outline">Edit Profile</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="grid-2">
+    <div>
+      <p class="eyebrow">Full name</p>
+      <p>{{ user_obj.get_full_name|default:"—" }}</p>
+    </div>
+    <div>
+      <p class="eyebrow">Role</p>
+      <p><span class="badge badge-slate">{{ user_obj.get_role_display }}</span></p>
+    </div>
+    <div>
+      <p class="eyebrow">Email</p>
+      <p>{{ user_obj.email|default:"—" }}</p>
+    </div>
+    <div>
+      <p class="eyebrow">Phone</p>
+      <p>{{ user_obj.phone_number|default:"—" }}</p>
+    </div>
+    <div>
+      <p class="eyebrow">Date of birth</p>
+      <p>{{ user_obj.date_of_birth|default:"—" }}</p>
+    </div>
+    <div>
+      <p class="eyebrow">Passport number</p>
+      <p>{{ user_obj.passport_number|default:"—" }}</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

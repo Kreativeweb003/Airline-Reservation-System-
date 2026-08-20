@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}{{ flight.flight_number }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <p class="eyebrow">{{ flight.route.origin.iata_code }} &rarr; {{ flight.route.destination.iata_code }}</p>
+    <h1>{{ flight.flight_number }}</h1>
+  </div>
+  <div class="actions">
+    {% if flight.status == "DRAFT" %}
+      <a href="{% url 'flights:pricing' flight.pk %}" class="btn btn-primary">Set Pricing &amp; Activate</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header"><h3>Flight Info</h3></div>
+    <p class="eyebrow">Departure</p>
+    <p>{{ flight.departure_datetime|date:"D, d M Y — H:i" }} &middot; {{ flight.route.origin.iata_code }}</p>
+    <p class="eyebrow">Arrival</p>
+    <p>{{ flight.arrival_datetime|date:"D, d M Y — H:i" }} &middot; {{ flight.route.destination.iata_code }}</p>
+    <p class="eyebrow">Aircraft</p>
+    <p>{{ flight.aircraft.registration_number }} &mdash; {{ flight.aircraft.model_name }}</p>
+    <p class="eyebrow">Gate</p>
+    <p>{{ flight.gate|default:"—" }}</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>Seats &amp; Status</h3></div>
+    <div class="stat-grid" style="grid-template-columns:1fr 1fr; margin-bottom:1rem;">
+      <div class="stat-card">
+        <div class="stat-value">{{ flight.available_seats_count }}</div>
+        <div class="stat-label">Available</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{{ flight.occupancy_rate }}%</div>
+        <div class="stat-label">Occupancy</div>
+      </div>
+    </div>
+
+    <form method="post" action="{% url 'flights:status_update' flight.pk %}" class="flex">
+      {% csrf_token %}
+      <select name="status">
+        {% for value, label in flight.Status.choices %}
+          <option value="{{ value }}" {% if value == flight.status %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-outline btn-sm">Update Status</button>
+    </form>
+  </div>
+</div>
+
+{% if flight.class_prices.exists %}
+<div class="card">
+  <div class="card-header"><h3>Pricing</h3></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Class</th><th>Price</th></tr></thead>
+      <tbody>
+        {% for cp in flight.class_prices.all %}
+        <tr><td><span class="badge badge-amber">{{ cp.get_seat_class_display }}</span></td><td>{{ cp.price }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

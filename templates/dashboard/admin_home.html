@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Dashboard</h1>
+  <div class="actions">
+    <a href="{% url 'flights:create' %}" class="btn btn-primary">+ Schedule Flight</a>
+  </div>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-value">{{ stats.total_flights }}</div>
+    <div class="stat-label">Total Flights</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ stats.upcoming_flights }}</div>
+    <div class="stat-label">Upcoming Flights</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ stats.confirmed_reservations }}</div>
+    <div class="stat-label">Confirmed Bookings</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ stats.total_passengers }}</div>
+    <div class="stat-label">Passengers</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ stats.overall_occupancy_rate }}%</div>
+    <div class="stat-label">Occupancy Rate</div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">
+      <h3>Upcoming Departures</h3>
+      <a href="{% url 'flights:list' %}" class="text-muted" style="font-size:0.8rem;">View all &rarr;</a>
+    </div>
+    {% if upcoming_departures %}
+      {% for flight in upcoming_departures %}
+      <div class="flex-between" style="padding:0.6rem 0; border-bottom:1px solid var(--line);">
+        <div>
+          <div class="code">{{ flight.flight_number }}</div>
+          <div style="font-size:0.85rem;">{{ flight.route.origin.iata_code }} &rarr; {{ flight.route.destination.iata_code }}</div>
+        </div>
+        <div class="text-muted" style="font-size:0.82rem;">{{ flight.departure_datetime|date:"d M, H:i" }}</div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted mb-0">No upcoming departures.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>Recent Reservations</h3></div>
+    {% if recent_reservations %}
+      {% for r in recent_reservations %}
+      <div class="flex-between" style="padding:0.6rem 0; border-bottom:1px solid var(--line);">
+        <div>
+          <div class="code">{{ r.booking_reference }}</div>
+          <div style="font-size:0.85rem;">{{ r.passenger.get_full_name|default:r.passenger.username }}</div>
+        </div>
+        {% if r.status == "CONFIRMED" %}<span class="badge badge-green">Confirmed</span>
+        {% elif r.status == "CANCELLED" %}<span class="badge badge-red">Cancelled</span>{% endif %}
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-muted mb-0">No reservations yet.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

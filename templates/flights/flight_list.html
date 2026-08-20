@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Flights{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Flights</h1>
+  <div class="actions">
+    <a href="{% url 'flights:create' %}" class="btn btn-primary">+ Schedule Flight</a>
+  </div>
+</div>
+
+{% if flights %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Flight</th><th>Route</th><th>Departs</th><th>Aircraft</th><th>Occupancy</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for flight in flights %}
+      <tr>
+        <td class="code">{{ flight.flight_number }}</td>
+        <td>{{ flight.route.origin.iata_code }} &rarr; {{ flight.route.destination.iata_code }}</td>
+        <td>{{ flight.departure_datetime|date:"d M Y, H:i" }}</td>
+        <td>{{ flight.aircraft.registration_number }}</td>
+        <td>{{ flight.occupancy_rate }}%</td>
+        <td>
+          {% if flight.status == "SCHEDULED" %}<span class="badge badge-green">{{ flight.get_status_display }}</span>
+          {% elif flight.status == "CANCELLED" %}<span class="badge badge-red">{{ flight.get_status_display }}</span>
+          {% elif flight.status == "DRAFT" %}<span class="badge badge-amber">{{ flight.get_status_display }}</span>
+          {% else %}<span class="badge badge-slate">{{ flight.get_status_display }}</span>{% endif %}
+        </td>
+        <td>
+          <a href="{% url 'flights:detail' flight.pk %}" class="btn btn-outline btn-sm">View</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state card">
+  <h3>No flights scheduled</h3>
+  <p>Create a flight, then set pricing to open it for booking.</p>
+  <a href="{% url 'flights:create' %}" class="btn btn-primary">+ Schedule Flight</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Find My Booking{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Find My Booking</h1></div>
+
+<div class="card" style="max-width:420px;">
+  <form method="get">
+    <div class="form-group">
+      <label for="reference">Booking reference</label>
+      <input type="text" id="reference" name="reference" value="{{ reference }}" data-uppercase placeholder="e.g. A1B2C3D4" maxlength="10">
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Look up booking</button>
+  </form>
+</div>
+
+{% if reservation %}
+<div class="boarding-pass mt-2">
+  <div class="flex" style="gap:2.5rem; flex-wrap:wrap;">
+    <div class="field">
+      <p class="eyebrow">Passenger</p>
+      <p class="value">{{ reservation.passenger_full_name }}</p>
+    </div>
+    <div class="field">
+      <p class="eyebrow">Flight</p>
+      <p class="value">{{ reservation.flight.flight_number }}</p>
+    </div>
+    <div class="field">
+      <p class="eyebrow">Route</p>
+      <p class="value">{{ reservation.flight.route.origin.iata_code }} &rarr; {{ reservation.flight.route.destination.iata_code }}</p>
+    </div>
+    <div class="field">
+      <p class="eyebrow">Seat</p>
+      <p class="value">{{ reservation.seat.seat_number }}</p>
+    </div>
+  </div>
+  <div class="ref-block">
+    <p class="eyebrow">Reference</p>
+    <p class="value">{{ reservation.booking_reference }}</p>
+    {% if reservation.status == "CONFIRMED" %}<span class="badge badge-green">Confirmed</span>
+    {% elif reservation.status == "CANCELLED" %}<span class="badge badge-red">Cancelled</span>{% endif %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

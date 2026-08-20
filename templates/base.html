@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Airline Reservation System{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="{% if is_admin_layout %}has-sidebar{% endif %}">
+
+{% if is_admin_layout %}
+    {% include "partials/sidebar.html" %}
+{% endif %}
+
+<div class="app-main">
+
+    {% if is_admin_layout %}
+        <header class="topbar">
+            <button class="sidebar-toggle" aria-label="Toggle menu">&#9776;</button>
+            <span class="topbar-title">{% block topbar_title %}{% endblock %}</span>
+        </header>
+    {% else %}
+        {% include "partials/navbar.html" %}
+    {% endif %}
+
+    <main class="main-content">
+        <div class="{% if is_admin_layout %}container-fluid{% else %}container{% endif %}">
+            {% include "partials/messages.html" %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    {% include "partials/footer.html" %}
+
+</div>
+
+<script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

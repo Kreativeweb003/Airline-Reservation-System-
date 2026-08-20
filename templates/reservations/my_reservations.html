@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}My Bookings{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>My Bookings</h1>
+  <div class="actions">
+    <a href="{% url 'flights:search' %}" class="btn btn-primary">+ Book a Flight</a>
+  </div>
+</div>
+
+<h3>Upcoming Trips</h3>
+{% if upcoming %}
+  {% for r in upcoming %}
+  <div class="flight-strip">
+    <div>
+      <div class="code">{{ r.booking_reference }}</div>
+      <div class="route">
+        {{ r.flight.route.origin.iata_code }} <span class="arrow">&rarr;</span> {{ r.flight.route.destination.iata_code }}
+      </div>
+    </div>
+    <div class="meta">
+      <div><strong>{{ r.flight.departure_datetime|date:"d M Y" }}</strong>Date</div>
+      <div><strong>{{ r.flight.departure_datetime|date:"H:i" }}</strong>Departs</div>
+      <div><strong>{{ r.seat.seat_number }}</strong>Seat</div>
+    </div>
+    <a href="{% url 'reservations:detail' r.pk %}" class="btn btn-outline">View</a>
+  </div>
+  {% endfor %}
+{% else %}
+  <div class="empty-state card"><p class="mb-0">No upcoming trips booked yet.</p></div>
+{% endif %}
+
+<h3 class="mt-3">Booking History</h3>
+{% if all_bookings %}
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Reference</th><th>Flight</th><th>Route</th><th>Date</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for r in all_bookings %}
+      <tr>
+        <td class="code">{{ r.booking_reference }}</td>
+        <td>{{ r.flight.flight_number }}</td>
+        <td>{{ r.flight.route.origin.iata_code }} &rarr; {{ r.flight.route.destination.iata_code }}</td>
+        <td>{{ r.flight.departure_datetime|date:"d M Y" }}</td>
+        <td>
+          {% if r.status == "CONFIRMED" %}<span class="badge badge-green">Confirmed</span>
+          {% elif r.status == "CANCELLED" %}<span class="badge badge-red">Cancelled</span>
+          {% else %}<span class="badge badge-slate">{{ r.get_status_display }}</span>{% endif %}
+        </td>
+        <td><a href="{% url 'reservations:detail' r.pk %}" class="btn btn-outline btn-sm">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+  <div class="empty-state card"><p class="mb-0">No bookings yet.</p></div>
+{% endif %}
+{% endblock %}

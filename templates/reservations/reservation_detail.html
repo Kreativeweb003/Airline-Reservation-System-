@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Booking {{ reservation.booking_reference }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Booking Confirmed</h1>
+</div>
+
+<div class="boarding-pass mb-0">
+  <div class="flex" style="gap:2.5rem; flex-wrap:wrap;">
+    <div class="field">
+      <p class="eyebrow">Passenger</p>
+      <p class="value">{{ reservation.passenger_full_name }}</p>
+    </div>
+    <div class="field">
+      <p class="eyebrow">Flight</p>
+      <p class="value">{{ reservation.flight.flight_number }}</p>
+    </div>
+    <div class="field">
+      <p class="eyebrow">Route</p>
+      <p class="value">{{ reservation.flight.route.origin.iata_code }} &rarr; {{ reservation.flight.route.destination.iata_code }}</p>
+    </div>
+    <div class="field">
+      <p class="eyebrow">Departs</p>
+      <p class="value">{{ reservation.flight.departure_datetime|date:"d M — H:i" }}</p>
+    </div>
+    <div class="field">
+      <p class="eyebrow">Seat</p>
+      <p class="value">{{ reservation.seat.seat_number }}</p>
+    </div>
+  </div>
+  <div class="ref-block">
+    <p class="eyebrow">Booking Reference</p>
+    <p class="value">{{ reservation.booking_reference }}</p>
+    <p class="mb-0">
+      {% if reservation.status == "CONFIRMED" %}<span class="badge badge-green">Confirmed</span>
+      {% elif reservation.status == "CANCELLED" %}<span class="badge badge-red">Cancelled</span>
+      {% else %}<span class="badge badge-slate">{{ reservation.get_status_display }}</span>{% endif %}
+    </p>
+  </div>
+</div>
+
+<div class="card mt-2" style="max-width:480px;">
+  <p class="eyebrow">Price paid</p>
+  <p style="font-family:var(--font-display); font-size:1.2rem;">{{ reservation.price_paid }}</p>
+  <p class="eyebrow">Booked on</p>
+  <p>{{ reservation.booked_at|date:"d M Y, H:i" }}</p>
+
+  {% if reservation.is_cancellable %}
+  <form method="post" action="{% url 'reservations:cancel' reservation.pk %}" onsubmit="return confirm('Cancel this booking? This cannot be undone.');" class="mt-1">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Cancel Reservation</button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

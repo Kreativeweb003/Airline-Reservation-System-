@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ aircraft.registration_number }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <p class="eyebrow">{{ aircraft.get_manufacturer_display }}</p>
+    <h1>{{ aircraft.registration_number }} &mdash; {{ aircraft.model_name }}</h1>
+  </div>
+  <div class="actions">
+    <a href="{% url 'aircraft:edit' aircraft.pk %}" class="btn btn-outline">Edit</a>
+    {% if aircraft.is_active %}
+    <form method="post" action="{% url 'aircraft:deactivate' aircraft.pk %}" onsubmit="return confirm('Deactivate this aircraft?');">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Deactivate</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+<div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+  <div class="stat-card">
+    <div class="stat-value">{{ aircraft.total_capacity }}</div>
+    <div class="stat-label">Total Seats</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ aircraft.seat_configurations.count }}</div>
+    <div class="stat-label">Seat Classes</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value">{{ aircraft.flights.count }}</div>
+    <div class="stat-label">Scheduled Flights</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><h3>Seat Configuration</h3></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Class</th><th>Rows</th><th>Columns</th><th>Seats</th></tr>
+      </thead>
+      <tbody>
+        {% for cfg in aircraft.seat_configurations.all %}
+        <tr>
+          <td><span class="badge badge-amber">{{ cfg.get_seat_class_display }}</span></td>
+          <td>{{ cfg.row_start }}&ndash;{{ cfg.row_end }}</td>
+          <td>{{ cfg.columns }}</td>
+          <td>{{ cfg.seat_count }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
