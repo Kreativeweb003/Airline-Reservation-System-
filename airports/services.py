@@ -2,12 +2,17 @@ from django.core.exceptions import ValidationError
 from .models import Airport
 
 
-def create_airport(*, iata_code, name, city, country, timezone="UTC"):
+def create_airport(*, iata_code, name, city, country, timezone="UTC", is_active=True):
     iata_code = iata_code.upper().strip()
     if Airport.objects.filter(iata_code=iata_code).exists():
         raise ValidationError(f"Airport with code {iata_code} already exists.")
     return Airport.objects.create(
-        iata_code=iata_code, name=name, city=city, country=country, timezone=timezone,
+        iata_code=iata_code,
+        name=name,
+        city=city,
+        country=country,
+        timezone=timezone,
+        is_active=is_active,
     )
 
 
