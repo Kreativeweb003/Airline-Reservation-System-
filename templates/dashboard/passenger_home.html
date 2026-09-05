@@ -7,7 +7,7 @@
     <h1>{{ user.get_full_name|default:user.username }}</h1>
   </div>
   <div class="actions">
-    <a href="{% url 'flights:search' %}" class="btn btn-primary">+ Book a Flight</a>
+    <a href="{% url 'flights:search' %}" class="btn btn-primary">+ Search Flights</a>
   </div>
 </div>
 
@@ -29,7 +29,36 @@
 {% else %}
   <div class="empty-state card">
     <h3>No trips coming up</h3>
-    <p>Search for a flight and you'll see it here once booked.</p>
+    <p>Browse available flights below and book your first trip.</p>
+  </div>
+{% endif %}
+
+<div class="flex-between mt-3">
+  <h3 class="mb-0">Available Flights</h3>
+</div>
+{% if page_obj %}
+  {% for flight in page_obj %}
+  <div class="flight-strip">
+    <div>
+      <div class="code">{{ flight.flight_number }}</div>
+      <div class="route">
+        {{ flight.route.origin.iata_code }} <span class="arrow">&rarr;</span> {{ flight.route.destination.iata_code }}
+      </div>
+    </div>
+    <div class="meta">
+      <div><strong>{{ flight.departure_datetime|date:"d M Y" }}</strong>Date</div>
+      <div><strong>{{ flight.departure_datetime|date:"H:i" }}</strong>Departs</div>
+      <div><strong>{{ flight.available_seats_count }}</strong>Seats left</div>
+    </div>
+    <a href="{% url 'reservations:seat_map' flight.pk %}" class="btn btn-primary">Select Seat</a>
+  </div>
+  {% endfor %}
+
+  {% include "partials/pagination.html" %}
+{% else %}
+  <div class="empty-state card">
+    <h3>No flights available right now</h3>
+    <p>Check back later, or use search once new flights are scheduled.</p>
   </div>
 {% endif %}
 

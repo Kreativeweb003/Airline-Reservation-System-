@@ -1,8 +1,10 @@
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.shortcuts import render
 
-from aircraft.decorators import admin_required
+from accounts.decorators import admin_required
 from reservations.services import get_passenger_reservations
+from flights.services import list_available_flights
 from .services import (
     get_admin_stats, get_flight_occupancy_report,
     get_recent_reservations, get_upcoming_departures,
@@ -20,9 +22,16 @@ def home_view(request):
 def passenger_dashboard_view(request):
     upcoming = get_passenger_reservations(request.user, upcoming_only=True)[:5]
     recent = get_passenger_reservations(request.user)[:5]
+
+    available_flights = list_available_flights()
+    paginator = Paginator(available_flights, 8)  # 8 flights per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "dashboard/passenger_home.html", {
         "upcoming": upcoming,
         "recent": recent,
+        "page_obj": page_obj,
     })
 
 
@@ -46,6 +55,3 @@ def occupancy_report_view(request):
         "report": report,
         "status_filter": status_filter,
     })
-
-
-

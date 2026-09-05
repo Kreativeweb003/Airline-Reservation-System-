@@ -90,4 +90,18 @@ def update_flight_status(flight: FlightSchedule, new_status: str):
     flight.save(update_fields=["status"])
 
 
+def list_available_flights():
+    """All bookable flights, soonest first — used for browse-style listing (vs. filtered search)."""
+    return FlightSchedule.objects.filter(
+        status=FlightSchedule.Status.SCHEDULED,
+        departure_datetime__gt=timezone.now(),
+    ).select_related(
+        "route__origin", "route__destination", "aircraft"
+    ).order_by("departure_datetime")
+
+
+
+
+
+
 
