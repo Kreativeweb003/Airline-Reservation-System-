@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from .models import FlightSchedule, FlightClassPrice, Seat
 
